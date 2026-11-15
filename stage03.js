@@ -263,7 +263,7 @@
     if(picked&&picked.id!==sourcePref.site)state.view=aim(picked);
     activePreview=drag=flight=null;
     panel.hidden=false;panel.classList.toggle('arrive',animate);
-    $('discover-origin').textContent=(world==='mars'?'Mars':'Moon')+' · '+fmt(source.lat,source.lon)+' · Environment type '+source.type;
+    $('discover-origin').textContent=(world==='mars'?'Mars':'Moon')+' · '+fmt(source.lat,source.lon);
     refine.open=Boolean(pref.refine);inputs.forEach((input,k)=>input.checked=state.enabled[k]);
     renderList();map.load('earth',tiles,prepareImagery);resizePending=true;
     panel.scrollTop=sourcePref.pageTop||0;list.scrollTop=sourcePref.listTop||0;

@@ -65,7 +65,7 @@
     if(c&&!c.missing){
       const a=D.arch[c.type],q=D.cellDist?.[config.key];
       const index=q?.findIndex(bound=>c.distance<=bound)??-1;
-      $('region-type').textContent=c.type+' · '+a.n.toLocaleString('en-US')+' cells';
+      $('region-type').textContent='Shared by '+a.n.toLocaleString('en-US')+' cells';
       $('region-typicality').textContent=c.distance==null?'Not reported':c.distance.toFixed(2)+(q?' · '+approach[index<0?3:index]:'');
       const conditions=[];
       if(a.elev!=null)conditions.push(a.elev.toLocaleString('en-US')+' m elevation');
@@ -117,7 +117,7 @@
     $('latitude').value=cell.lat;$('longitude').value=cell.lon;
     renderSelection();store();draw();
     writeCellHash(cell);
-    $('announcement').textContent=fmt(cell.lat,cell.lon)+(cell.missing?'. No study data.':'. Environment type '+cell.type+'.');
+    $('announcement').textContent=fmt(cell.lat,cell.lon)+(cell.missing?'. No study data.':'.');
   }
   function writeCellHash(cell){
     const [path]=location.hash.split('?');
