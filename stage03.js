@@ -155,8 +155,10 @@
     list.replaceChildren(...priority.map((point,i)=>{
       const li=document.createElement('li'),button=document.createElement('button');
       button.type='button';button.className='candidate';button.dataset.site=point.id;
-      // Top three get a medal frame, but only when every selected dimension has data.
-      const rank=score(point.row),medal=i<3&&rank.missing===0&&rank.weakest!=null?medals[i]:null;
+      // Top three get a medal frame, but only when every selected, applicable dimension has data.
+      // Not-applicable dimensions (lunar Dust) do not count as missing.
+      const row=point.row,gaps=state.enabled.filter((on,k)=>on&&row.st[k]!=='not_applicable'&&(row.d[k]==null||(k===3&&row.abs))).length;
+      const medal=i<3&&gaps===0&&score(row).weakest!=null?medals[i]:null;
       if(medal){
         li.className='medal medal-'+medal;
         const badge=document.createElement('span');badge.className='medal-rank';badge.textContent=String(i+1);
