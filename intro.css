@@ -1,0 +1,21 @@
+/* Opening sequence: drawn from the project's own data (planet cells, environment types, Earth matches). */
+#intro{position:fixed;inset:0;z-index:100;background:var(--paper,#030608);color:#f0eee8;cursor:pointer;
+  transition:opacity .8s ease;animation:intro-fallback 0s 14s forwards}
+#intro.done{opacity:0;pointer-events:none}
+@keyframes intro-fallback{to{opacity:0;visibility:hidden;pointer-events:none}}
+#intro canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#intro .intro-caption{position:absolute;left:50%;bottom:9vh;transform:translateX(-50%);width:min(92vw,720px);text-align:center;
+  font:12px/1.6 Arial,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#aeb7bb;transition:opacity .5s ease}
+#intro .intro-caption b{color:#f0eee8;font-weight:400;font-variant-numeric:tabular-nums}
+#intro .intro-caption small{display:block;margin-top:6px;font-size:10px;letter-spacing:.18em;color:#6f7a7f}
+#intro .intro-title{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}
+#intro .intro-title h2{margin:0;font-family:"Century Gothic","Futura","Avenir Next","Segoe UI",sans-serif;font-weight:400;
+  font-size:clamp(38px,7vw,96px);letter-spacing:.32em;margin-right:-.32em;line-height:1}
+#intro .intro-title h2 span{display:inline-block;opacity:0;transform:translateY(.18em);transition:opacity .9s ease,transform 1.2s cubic-bezier(.2,.75,.25,1)}
+#intro .intro-title p{margin:22px 0 0;font:12px/1.6 Arial,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#aeb7bb;opacity:0;transition:opacity 1s ease}
+#intro.titled .intro-title h2 span{opacity:1;transform:none}
+#intro.titled .intro-title p{opacity:1}
+#intro-skip{position:absolute;right:28px;bottom:24px;padding:8px 2px;border:0;background:none;color:#8d989d;
+  font:11px Arial,sans-serif;letter-spacing:.2em;cursor:pointer}
+#intro-skip:hover,#intro-skip:focus-visible{color:#f0eee8}
+@media (max-width:640px){#intro .intro-caption{bottom:12vh;font-size:11px}#intro-skip{right:16px;bottom:16px}}
