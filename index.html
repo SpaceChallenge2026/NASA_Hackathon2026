@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>ELSEWHERE — Earth Analog Finder</title>
+<meta name="description" content="Explore Mars and Moon regions, discover Earth analogs, and investigate the research behind each comparison. A NASA Space Apps Challenge 2026 team project.">
+<link rel="icon" href="data:,">
+<link rel="preload" href="art/mars-sphere-v2.png" as="image">
+<link rel="preload" href="art/moon-sphere-v2.png" as="image">
+<link rel="stylesheet" href="stage01.css">
+<link rel="stylesheet" href="stage02.css">
+<link rel="stylesheet" href="stage03.css">
+<link rel="stylesheet" href="stage04.css?v=20261115">
+<link rel="stylesheet" href="monthly-test-windows.css">
+<link rel="stylesheet" href="sound.css">
+</head>
+<body>
+<main id="screen" data-scene="overview" data-world="">
+  <h1 class="sr-only">ELSEWHERE</h1>
+  <p id="introduction" class="sr-only">Discover where distant worlds meet Earth.</p>
+  <canvas id="universe" aria-hidden="true"></canvas>
+  <nav class="sr-only" id="scene-navigation" aria-label="Destination navigation">
+    <button id="back" type="button" aria-label="Back to destinations" hidden>Back</button>
+  </nav>
+  <div class="sr-only" id="destinations" role="group" aria-label="Destinations">
+    <button id="mars" type="button" aria-label="Focus Mars" aria-pressed="false">MARS</button>
+    <button id="moon" type="button" aria-label="Focus Moon" aria-pressed="false">MOON</button>
+  </div>
+
+  <aside id="info-layer">
+    <button id="info-close" class="info-return" type="button" aria-label="Return to scene" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5-7 7 7 7M3 12h18"/></svg><span>RETURN</span>
+    </button>
+    <nav class="aux-nav" aria-label="Project information">
+      <button type="button" data-info="about" aria-controls="panel-about" aria-expanded="false">ABOUT</button>
+      <button type="button" data-info="play" aria-controls="panel-play" aria-expanded="false">HOW TO PLAY</button>
+      <button type="button" data-info="credits" aria-controls="panel-credits" aria-expanded="false">CREDITS</button>
+      <div id="sound-control">
+        <button id="sound-settings" type="button" aria-controls="sound-panel" aria-expanded="false"><span aria-hidden="true" class="sound-led"></span>SOUND</button>
+        <section id="sound-panel" aria-label="Sound settings" hidden>
+          <div class="sound-panel-head">
+            <h2>Sound</h2>
+            <button id="sound-master" type="button" aria-pressed="false">Sound off</button>
+          </div>
+          <div class="sound-channel">
+            <label><input id="sound-music" type="checkbox" checked> Music</label>
+            <input id="music-volume" type="range" min="0" max="100" value="60" aria-label="Music volume">
+          </div>
+          <div class="sound-channel">
+            <label><input id="sound-effects" type="checkbox" checked> Interface sounds</label>
+            <input id="effects-volume" type="range" min="0" max="100" value="68" aria-label="Interface sounds volume">
+          </div>
+          <p id="sound-status" role="status">Enable sound to hear the score and interactions.</p>
+        </section>
+      </div>
+    </nav>
+    <div id="info-sheet" aria-hidden="true">
+      <div id="info-dismiss" aria-hidden="true"></div>
+      <article id="panel-about" class="info-panel" hidden>
+        <p class="section-label">NASA SPACE APPS CHALLENGE 2026</p>
+        <h2 id="heading-about" tabindex="-1">Earth as a<br>testing ground.</h2>
+        <p class="info-lead">Find places on Earth that can help prepare for future lunar bases and Mars landings.</p>
+        <p>The challenge asks teams to use open data from Earth, the Moon and Mars to identify and describe terrestrial analogs. Deserts, polar regions, volcanic landscapes and caves can share conditions with another world and help mission teams test equipment and procedures before launch. Teams present what they find through a map, visualization or interactive tool.</p>
+        <p>ELSEWHERE maps 12,960 lunar and Martian surface cells onto 42 environment types. Explore which Earth sites match on each dimension and see how the team would adjust an Earth test for the target conditions. The comparisons can guide what to investigate in the field.</p>
+      </article>
+
+      <article id="panel-play" class="info-panel" hidden>
+        <p class="section-label">HOW TO PLAY</p>
+        <h2 id="heading-play" tabindex="-1">Begin with<br>a world.</h2>
+        <ol class="journey">
+          <li><span class="step-number">01</span><div><h3>Choose a world</h3><p>Select Mars or the Moon to bring it into focus. Select the same world again or choose <strong>Explore</strong> to open its surface map.</p></div></li>
+          <li><span class="step-number">02</span><div><h3>Choose a surface region</h3><p>Drag the globe to rotate it and use + or − to zoom. Select a surface cell to see its coordinates and environment. <strong>Explore another way</strong> lets you enter coordinates or locate a catalogued pit. When you have the region you want, select <strong>Discover Earth analogs</strong>.</p></div></li>
+          <li><span class="step-number">03</span><div><h3>Find an Earth analog</h3><p>Select a candidate in the list or a marker on Earth to locate it. Use <strong>Refine comparison</strong> to choose which dimensions determine candidate order. Select <strong>Investigate site</strong> below the candidate to open its report.</p></div></li>
+          <li><span class="step-number">04</span><div><h3>Investigate the site</h3><p>View the satellite image and the strongest and weakest matches. Select <strong>All six dimensions</strong> for the full comparison. A higher similarity (from 0 to 1) means a closer relative match on that dimension. Expand the monthly test windows, engineering scenario, interpretation and cave comparisons for details where available.</p></div></li>
+        </ol>
+      </article>
+
+      <article id="panel-credits" class="info-panel" hidden>
+        <p class="section-label">CREDITS</p>
+        <h2 id="heading-credits" tabindex="-1">Team &amp;<br>sources.</h2>
+        <p class="info-lead">Made by the ELSEWHERE team for the 2026 NASA Space Apps Challenge.</p>
+        <section class="source-section" aria-labelledby="credit-research">
+          <h3 id="credit-research">Research data and methods</h3>
+          <ul class="credit-sources">
+            <li><strong>Challenge brief</strong> <a href="https://www.spaceappschallenge.org/2026/challenges/permanent-moon-base-locations-and-mars/" target="_blank" rel="noopener">Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars</a>.</li>
+            <li><strong>Earth analog comparisons</strong> The team's research dataset compares Earth sites with Mars and Moon environment types across six dimensions. <a href="https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-1-states-provinces/" target="_blank" rel="noopener">Natural Earth Admin 1 boundaries</a> support regional place labels.</li>
+            <li><strong>Similarity percentiles</strong> Each dimension uses its own distribution of recorded distances, including ties. Pairs with both water-ice proxies at or below 0.05 contribute to that distribution and display as “No positive ice evidence.”</li>
+            <li><strong>Monthly test windows</strong> <a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">NASA POWER</a> modelled monthly climatology for 2016–2025. Window thresholds use the team's planetary environment types. Solar geometry is calculated from latitude and season.</li>
+            <li><strong>Engineering scenarios</strong> The team's November 2026 Mission IT-Π full-pool release supplies one primary scenario for each of the 3,347 Earth–planet pairs. Rover mobility draws on one JPL reference run. The other five tasks use team-built synthetic physics models.</li>
+            <li><strong>Caves and pits</strong> The team shortlist draws on the <a href="https://lroc.im-ldi.com/atlases/pits" target="_blank" rel="noopener">LROC Pits Atlas</a> and <a href="https://pds.nasa.gov/ds-view/pds/viewBundle.jsp?identifier=urn%3Anasa%3Apds%3Amars_cave_catalog&amp;version=1.0" target="_blank" rel="noopener">Mars Global Cave Candidate Catalog</a>. Earth cave records include data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> under the ODbL.</li>
+          </ul>
+        </section>
+        <section class="source-section" aria-labelledby="credit-method">
+          <h3 id="credit-method">How the study works</h3>
+          <details class="credit-fold">
+            <summary>Planetary coverage and comparisons</summary>
+            <ul class="credit-sources">
+              <li><strong>Environment types</strong> Terrain fingerprints and environmental features are standardized using their median and interquartile range. Farthest-first selection adds representative cells until the largest standardized feature difference between any cell and its nearest representative is at most 1.5. All 12,960 cells remain individually selectable.</li>
+              <li><strong>Earth analogs</strong> The team compares feature distributions with Wasserstein and multivariate energy distances and uses normalized differences for the environmental proxies. The study keeps each dimension separate. Its shortlist retains Pareto candidates, sites with a smaller worst-dimension distance and sites that lead on an individual dimension.</li>
+              <li><strong>Reading similarity</strong> For a given dimension, similarity is the share, from 0 to 1, of recorded study distances at least as large as this pair's distance, including ties. The comparison view leaves missing values and inapplicable dimensions marked as such.</li>
+              <li><strong>Research context</strong> Hipkin et al. describe how analog studies support Mars science and mission planning. <a href="https://doi.org/10.1016/j.icarus.2013.02.021" target="_blank" rel="noopener">Analogue sites for Mars missions</a>.</li>
+            </ul>
+          </details>
+          <details class="credit-fold">
+            <summary>Engineering scale transfer</summary>
+            <ul class="credit-sources">
+              <li><strong>Task assignment</strong> The smallest eligible dimension distance selects the primary task. Terrain leads to rover mobility, surface material to drilling, thermal to thermal control, illumination to power, water ice to ice operations and dust to dust mitigation.</li>
+              <li><strong>Adjustment search</strong> The model samples 7,000 fixed-seed combinations of four log control multipliers, each within ±1.4. It keeps the tested setting with the lowest objective. The objective adds the largest absolute log ratio of Earth and target Π groups to 0.015 times the sum of the absolute log multipliers. An increase of 40% means 1.40 times the original Earth test setting.</li>
+              <li><strong>Residual Π mismatch</strong> This is the largest absolute log-ratio remaining for the selected adjustment, before adding the control penalty. It describes the scenario's dimensionless groups. Values use assumed inputs and cannot establish field conditions or certify a test setting.</li>
+              <li><strong>Method reference</strong> The team's approach is inspired by the information-theoretic treatment of dimensionless groups in <a href="https://www.nature.com/articles/s41467-025-64425-8" target="_blank" rel="noopener">Yuan &amp; Lozano-Durán (2025), Dimensionless learning based on information</a>.</li>
+            </ul>
+          </details>
+          <details class="credit-fold">
+            <summary>Engineering test references</summary>
+            <ul class="credit-sources">
+              <li><strong>Rover mobility</strong> One exploratory JPL duracrust run informed the rover model. <a href="https://zenodo.org/records/5033623" target="_blank" rel="noopener">Lightholder et al., Barefoot Rover BST110 Material Data</a>.</li>
+              <li><strong>Drilling &amp; sampling</strong> Rotary-drilling specific energy motivated the synthetic model's force and torque terms. <a href="https://www.sciencedirect.com/science/article/pii/0148906265900227" target="_blank" rel="noopener">Teale, The concept of specific energy in rock drilling</a>.</li>
+              <li><strong>Thermal control</strong> Context for conduction and radiation in the team's heat-transfer model. <a href="https://www.nasa.gov/smallsat-institute/sst-soa/thermal-control/" target="_blank" rel="noopener">NASA SmallSat Institute, Thermal Control</a>.</li>
+              <li><strong>Power continuity</strong> Context for the team's solar generation and dark-period storage model. <a href="https://www.nasa.gov/smallsat-institute/sst-soa/power-subsystems/" target="_blank" rel="noopener">NASA SmallSat Institute, Power Subsystems</a>.</li>
+              <li><strong>Ice resource operations</strong> Related experimental work on water capture under vacuum. <a href="https://ntrs.nasa.gov/citations/20230014905" target="_blank" rel="noopener">Krause et al., Thermal Model of Ice Growth in Vacuum for Lunar Water Production</a>.</li>
+              <li><strong>Dust mitigation</strong> Lunar dust background for the team's particle-transport model. Electrostatic effects are outside the model's scope. <a href="https://ntrs.nasa.gov/citations/20220018746" target="_blank" rel="noopener">NASA, Lunar Dust Mitigation: A Guide and Reference</a>.</li>
+            </ul>
+          </details>
+        </section>
+        <section class="source-section" aria-labelledby="credit-imagery">
+          <h3 id="credit-imagery">Imagery</h3>
+          <ul class="credit-sources">
+            <li id="current-site-image-source" hidden><a id="site-image-source" target="_blank" rel="noopener"></a></li>
+            <li><strong>Destination artwork</strong> The opening <a href="art/mars-sphere-v2.png" target="_blank" rel="noopener">Mars</a> and <a href="art/moon-sphere-v2.png" target="_blank" rel="noopener">Moon</a> images are original ImageGen concept art. The lighting and relative sizes are artistic choices.</li>
+            <li><strong>Planet maps</strong> <a href="https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=mars" target="_blank" rel="noopener">Viking VIS Global Color Mosaic</a> for Mars and <a href="https://trek.nasa.gov/moon/" target="_blank" rel="noopener">LRO WAC Mosaic v2</a> for the Moon, both via NASA Solar System Treks.</li>
+            <li><strong>Earth globe and regional views</strong> <a href="https://worldview.earthdata.nasa.gov/?l=BlueMarble_NextGeneration" target="_blank" rel="noopener">NASA Blue Marble Next Generation</a> via GIBS.</li>
+            <li><strong>Site close-ups</strong> The <a href="https://worldview.earthdata.nasa.gov/?l=Landsat_WELD_CorrectedReflectance_TrueColor_Global_Annual&amp;t=2000-12-01" target="_blank" rel="noopener">Landsat/WELD 2000 annual true-color composite</a> via NASA GIBS. Blue Marble supplies regional context where close-up imagery is unavailable.</li>
+          </ul>
+        </section>
+        <section class="source-section" aria-labelledby="credit-assistance">
+          <h3 id="credit-assistance">Website development</h3>
+          <p>Codex assisted with implementation and browser testing.</p>
+        </section>
+      </article>
+    </div>
+  </aside>
+
+  <section id="atlas" aria-labelledby="atlas-title" hidden>
+    <button id="atlas-back" type="button" aria-label="Back to destination" class="atlas-back">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5-7 7 7 7M3 12h18"/></svg> BACK
+    </button>
+    <div class="atlas-frame">
+      <div class="atlas-map">
+        <div id="globe" class="atlas-globe" tabindex="0" role="group" aria-label="Planet map" aria-describedby="map-keys">
+          <div id="globe-surface"></div>
+          <canvas id="grid-map" aria-hidden="true"></canvas>
+        </div>
+        <p id="map-keys" class="sr-only">Use arrow keys to move the target one grid cell, Enter or Space to select it, and plus or minus to zoom. You can also select by coordinates or with the pit catalogue. Activate Discover Earth analogs when you are ready to continue.</p>
+        <div class="map-readout">
+          <output id="cursor"></output>
+          <small id="map-source"></small>
+        </div>
+        <div class="map-tools" role="group" aria-label="Map zoom">
+          <button id="zoom-in" type="button" aria-label="Zoom in">+</button>
+          <button id="zoom-out" type="button" aria-label="Zoom out">−</button>
+        </div>
+      </div>
+      <div class="atlas-sidebar">
+        <header>
+          <h2 id="atlas-title" tabindex="-1"></h2>
+          <p class="atlas-prompt">Choose a region to explore.</p>
+          <p id="map-hint" class="atlas-muted">Drag to rotate. Click or tap to select a region.</p>
+          <p id="map-status" class="atlas-muted" role="status"></p>
+        </header>
+        <section id="region" aria-labelledby="region-title">
+          <h3 id="region-title">Selected region</h3>
+          <p id="region-coordinates"></p>
+          <p id="region-status"></p>
+          <dl id="region-data" hidden>
+            <div><dt>Environment type</dt><dd id="region-type"></dd></div>
+            <div><dt>Typicality</dt><dd id="region-typicality"></dd></div>
+            <div><dt>Typical conditions</dt><dd id="region-conditions"></dd></div>
+            <div><dt>Earth analogs in this type</dt><dd id="region-count"></dd></div>
+          </dl>
+          <ul id="region-pits" aria-label="Catalogue features in this region" hidden></ul>
+          <button type="button" id="discover-next" hidden>Discover Earth analogs <span aria-hidden="true">→</span></button>
+        </section>
+        <details id="ways">
+          <summary>Explore another way</summary>
+          <div class="atlas-ways">
+            <form id="coordinates">
+              <div><label for="latitude">Latitude (°)</label><input id="latitude" type="number" step="any" min="-90" max="90" required></div>
+              <div><label for="longitude">Longitude (°)</label><input id="longitude" type="number" step="any" min="-180" max="180" required></div>
+              <button type="submit">Select region</button>
+            </form>
+            <div class="pit-picker">
+              <label for="pit-choice">Caves &amp; pits <span id="pit-count"></span></label>
+              <div><select id="pit-choice"></select><button id="locate-pit" type="button">Locate</button></div>
+              <p id="pit-key" class="atlas-muted">Blue squares mark caves and pits.</p>
+            </div>
+          </div>
+        </details>
+        <p id="atlas-coverage" class="atlas-muted"></p>
+      </div>
+    </div>
+  </section>
+  <section id="discover" aria-labelledby="discover-title" hidden>
+    <button id="discover-back" type="button" class="atlas-back" aria-label="Back to planetary region">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5-7 7 7 7M3 12h18"/></svg> BACK
+    </button>
+    <div class="discover-frame">
+      <header class="discover-heading">
+        <h2 id="discover-title" tabindex="-1">Earth analogs</h2>
+        <p id="discover-origin"></p>
+      </header>
+      <div class="earth-map">
+        <div id="earth-globe" tabindex="0" role="group" aria-label="Earth candidate map" aria-describedby="earth-map-keys">
+          <div id="earth-surface"></div><canvas id="earth-overlay" aria-hidden="true"></canvas>
+        </div>
+        <p id="earth-map-keys" class="sr-only">Drag or use arrow keys to rotate the Earth. Plus and minus zoom. Choose a marker or candidate to locate it, then activate Investigate site to open the report.</p>
+        <div class="map-readout">
+          <output id="earth-point"></output>
+          <small id="earth-source"></small>
+        </div>
+        <div class="map-tools" role="group" aria-label="Earth map zoom">
+          <button id="earth-in" type="button" aria-label="Zoom in">+</button>
+          <button id="earth-out" type="button" aria-label="Zoom out">−</button>
+        </div>
+      </div>
+      <div class="discover-results">
+        <div class="results-header">
+          <h3 id="results-title">Candidates <span id="candidate-count"></span></h3>
+          <details id="refine">
+            <summary>Refine comparison</summary>
+            <fieldset><legend class="sr-only">Comparison dimensions</legend><div id="comparison-dimensions"></div></fieldset>
+            <p>Selected dimensions affect the order. Results with fewer missing values come first, then the least similar selected dimension determines the order.</p>
+          </details>
+          <p id="earth-status" class="atlas-muted" role="status"></p>
+        </div>
+        <p id="candidates-empty" class="atlas-muted" hidden></p>
+        <ol id="candidate-list" aria-labelledby="results-title"></ol>
+        <div id="candidate-focus" hidden>
+          <p id="candidate-notes"></p>
+          <button id="candidate-investigate" type="button">Investigate site <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="investigate" aria-labelledby="site-title" hidden>
+    <button id="investigate-back" type="button" class="atlas-back" aria-label="Back to Earth analogs">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5-7 7 7 7M3 12h18"/></svg> BACK
+    </button>
+    <div class="site-report">
+      <div class="site-intro">
+        <figure id="site-figure" class="site-figure" data-imagery="loading">
+          <div class="site-image">
+            <div id="site-image-holder" aria-live="off"></div>
+            <span id="site-marker" hidden>
+              <span id="site-marker-tag"><span id="site-coordinates"></span><span id="site-marker-label"></span></span>
+            </span>
+            <p id="site-imagery-status" role="status"></p>
+          </div>
+          <figcaption id="site-image-caption" hidden>
+            <span id="site-image-view"></span>
+          </figcaption>
+        </figure>
+        <header class="site-heading">
+          <h2 id="site-title" tabindex="-1"><span id="site-place"></span><span id="site-country" hidden></span></h2>
+          <p id="site-coordinates-unplaced"></p>
+        </header>
+      </div>
+
+      <div class="site-readout">
+        <div class="site-context">
+          <p id="site-origin"></p>
+          <p id="site-finding"></p>
+        </div>
+        <section id="site-highlights" class="site-highlights" aria-labelledby="site-percentile-title" hidden>
+          <div class="site-highlights-heading">
+            <h3 id="site-percentile-title">Similarity</h3>
+            <button id="go-comparison" type="button">All six dimensions <span aria-hidden="true">↓</span></button>
+          </div>
+          <div id="site-percentile-axis" role="img"></div>
+        </section>
+      </div>
+
+      <section id="site-comparison" class="site-section" aria-labelledby="comparison-title">
+        <div class="site-section-heading">
+          <h3 id="comparison-title" tabindex="-1">Result</h3>
+          <p id="comparison-key"></p>
+        </div>
+        <table class="comparison-table" aria-describedby="comparison-key">
+          <thead><tr><th scope="col">Dimension</th><th scope="col">Similarity</th></tr></thead>
+          <tbody id="site-dimensions"></tbody>
+        </table>
+      </section>
+
+      <div class="site-research">
+        <details id="site-monthly">
+          <summary><span>Monthly test windows <span class="section-state" id="monthly-summary" hidden>No data</span></span></summary>
+          <div class="site-section-body" id="site-timeline"></div>
+        </details>
+        <details id="site-engineering">
+          <summary><span>Engineering scenario <span class="section-state" id="engineering-summary" hidden>No scenario</span></span></summary>
+          <div class="site-section-body" id="site-mission"></div>
+        </details>
+        <details id="site-evidence">
+          <summary><span>Interpretation &amp; limits</span></summary>
+          <div class="site-section-body" id="site-evidence-content"></div>
+        </details>
+        <details id="site-caves">
+          <summary><span>Cave &amp; pit comparisons <span class="section-state" id="caves-summary" hidden>No features in this cell</span></span></summary>
+          <div class="site-section-body" id="site-cave-content"></div>
+        </details>
+      </div>
+    </div>
+  </section>
+  <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
+  <p id="asset-error" hidden>The planet artwork could not load. Reload to try again.</p>
+  <noscript><p class="error-note">JavaScript is required for this interactive scene.</p></noscript>
+</main>
+<script src="data.js?v=20261115" defer></script>
+<script src="planet-map.js" defer></script>
+<script src="stage02.js" defer></script>
+<script src="stage03.js" defer></script>
+<script src="vendor/region_timeline.data.js" defer></script>
+<script src="vendor/region-timeline.js" defer></script>
+<script src="site-imagery.js" defer></script>
+<script src="monthly-test-windows.js?v=8" defer></script>
+<script src="stage04.js?v=20261115" defer></script>
+<script src="sound.js?v=r05" defer></script>
+<script src="stage01.js" defer></script>
+<script src="mission-sites.js" defer></script>
+<script src="share-card.js" defer></script>
+</body>
+</html>
