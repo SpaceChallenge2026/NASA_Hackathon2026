@@ -56,6 +56,14 @@
   scrollbar-width:thin;scrollbar-color:#3d4548 transparent;overflow-anchor:none
 }
 #candidate-list>li{border-top:1px solid var(--rule)}
+#candidate-list>li.medal{--medal:#d8b45a;border:1px solid var(--medal);margin:6px 0;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--medal) 25%,transparent)}
+#candidate-list>li.medal+li:not(.medal){border-top:0}
+#candidate-list>li.medal-gold{--medal:#e0b84f}
+#candidate-list>li.medal-silver{--medal:#c4ccd2}
+#candidate-list>li.medal-bronze{--medal:#c27f4a}
+#candidate-list>li.medal .candidate{padding-left:10px;justify-content:flex-start}
+#candidate-list>li.medal .candidate-arrow{margin-left:auto}
+.medal-rank{flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid var(--medal);color:var(--medal);font-size:12px;font-weight:600;line-height:1}
 .candidate{
   display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;width:100%;padding:11px 10px 11px 0;
   border:0;background:transparent;cursor:pointer;font-size:15px;line-height:1.35

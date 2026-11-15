@@ -151,9 +151,17 @@
     $('candidate-count').textContent='('+priority.length+')';
     $('candidates-empty').hidden=priority.length>0;
     $('candidates-empty').textContent='No Earth sites have been compared with this environment type.';
-    list.replaceChildren(...priority.map(point=>{
+    const medals=['gold','silver','bronze'];
+    list.replaceChildren(...priority.map((point,i)=>{
       const li=document.createElement('li'),button=document.createElement('button');
       button.type='button';button.className='candidate';button.dataset.site=point.id;
+      // Top three get a medal frame, but only when every selected dimension has data.
+      const rank=score(point.row),medal=i<3&&rank.missing===0&&rank.weakest!=null?medals[i]:null;
+      if(medal){
+        li.className='medal medal-'+medal;
+        const badge=document.createElement('span');badge.className='medal-rank';badge.textContent=String(i+1);
+        badge.setAttribute('aria-label','Rank '+(i+1));button.append(badge);
+      }
       const label=document.createElement('span'),small=document.createElement('small'),arrow=document.createElement('span');
       label.textContent=point.name;small.textContent=fmt(point.lat,point.lon);label.append(small);
       arrow.className='candidate-arrow';arrow.setAttribute('aria-hidden','true');arrow.textContent='›';button.append(label,arrow);
