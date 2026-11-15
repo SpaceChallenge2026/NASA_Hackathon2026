@@ -16,7 +16,9 @@
   };
   const stage = {overview: 1, focus: 1, atlas: 2, discover: 3, investigate: 4};
   const stemNames = ['breath', 'harmony', 'figure'];
-  const cueNames = ['select', 'confirm', 'expand', 'transition'];
+  // const cueNames = ['select', 'confirm', 'expand', 'transition'];  // old interface cues, replaced by sfx.js (files moved to _unused-audio/)
+  const cueNames = [];
+  const prefKey = 'elsewhere-sound-on';  // master switch, remembered; on unless the visitor turned it off
   const storageKey = 'elsewhere-sound-prototype-mix-v1';
   let context, loading, ready = false, enabled = false, voice = null;
   let scene = 'overview', world = '';
@@ -66,13 +68,19 @@
     control.toggleAttribute('data-active', enabled && ready);
     master.setAttribute('aria-pressed', String(enabled));
     master.textContent = enabled ? 'Sound on' : 'Sound off';
-    status.textContent = message ?? (enabled ? (ready ? 'Sound enabled.' : 'Loading the score and cues…') : 'Enable sound to hear the score and interactions.');
+    status.textContent = message ?? (enabled ? (ready ? 'Sound enabled.' : 'Loading the score…') : (prefOn() ? 'Sound starts with your first click.' : 'Enable sound to hear the score and interactions.'));
   }
 
   async function loadBuffer(name) {
-    const response = await fetch(`audio/${name}.wav?v=r05`);
-    if (!response.ok) throw new Error(`Could not read ${name}.wav (${response.status})`);
-    return context.decodeAudioData(await response.arrayBuffer());
+    // compressed score first, the WAV copy if this browser cannot decode it
+    for (const ext of ['ogg', 'wav']) {
+      try {
+        const response = await fetch(`audio/${name}.${ext}?v=r06`);
+        if (!response.ok) continue;
+        return await context.decodeAudioData(await response.arrayBuffer());
+      } catch { /* try the next format */ }
+    }
+    throw new Error(`Could not read ${name}`);
   }
 
   async function loadAudio() {
@@ -106,8 +114,16 @@
     ready = true;
   }
 
+  function savePref() { try { localStorage.setItem(prefKey, enabled ? 'on' : 'off'); } catch { /* optional */ } }
+  function syncSfx() {
+    if (window.ElsewhereSfx) window.ElsewhereSfx.setEnabled(prefOn() && channels.effects.toggle.checked);
+  }
+  function prefOn() { try { return localStorage.getItem(prefKey) !== 'off'; } catch { return true; } }
+
   async function toggleSound() {
     enabled = !enabled;
+    savePref();
+    syncSfx();
     syncPanel();
     if (!enabled) { applyVolumes(); return; }
     try {
@@ -134,7 +150,10 @@
     voice = null;
   }
 
-  function cue(name, {level = 1, body = '', rate = 1} = {}) {
+  function cue() {
+    return;  // old interface cues disabled: sfx.js now plays all interface sounds
+  }
+  function oldCue(name, {level = 1, body = '', rate = 1} = {}) {
     if (!ready || !enabled || !channels.effects.toggle.checked || channels.effects.volume.valueAsNumber === 0) return;
     releaseVoice();
     const source = context.createBufferSource();
@@ -166,12 +185,13 @@
       ramp(warmth.gain, scene === 'discover' ? 2.5 : 0, 1.55);
     }
     if (quiet) return;
-    if (stage[prev] !== stage[scene]) {
-      const forward = stage[scene] > stage[prev];
-      cue('transition', {level: forward ? .78 : .60, body: prev === 'focus' || scene === 'focus' ? world : ''});
-    } else if (scene === 'focus') {
-      cue('transition', {level: .40, body: world, rate: world === 'moon' ? 1.04 : .97});
-    }
+    // stage-change cue now comes from sfx.js (forward/back)
+    // if (stage[prev] !== stage[scene]) {
+    //   const forward = stage[scene] > stage[prev];
+    //   cue('transition', {level: forward ? .78 : .60, body: prev === 'focus' || scene === 'focus' ? world : ''});
+    // } else if (scene === 'focus') {
+    //   cue('transition', {level: .40, body: world, rate: world === 'moon' ? 1.04 : .97});
+    // }
   }
 
   function setPanel(open, moveFocus = false) {
@@ -189,14 +209,25 @@
     syncPanel();
   });
   for (const {toggle, volume} of Object.values(channels)) {
-    toggle.addEventListener('change', () => { applyVolumes(); saveMix(); });
+    toggle.addEventListener('change', () => { applyVolumes(); saveMix(); syncSfx(); });
     volume.addEventListener('input', () => { applyVolumes(); saveMix(); });
   }
+  // sound is on by default: start the score on the visitor's first click or key press, unless they turned it off
+  const autoStart = event => {
+    removeEventListener('pointerdown', autoStart, true);
+    removeEventListener('keydown', autoStart, true);
+    if (enabled || !prefOn() || control.contains(event.target)) return;
+    toggleSound();
+  };
+  addEventListener('pointerdown', autoStart, true);
+  addEventListener('keydown', autoStart, true);
+  addEventListener('DOMContentLoaded', () => { syncSfx(); syncPanel(); });
   document.addEventListener('click', event => {
     if (!panel.hidden && !control.contains(event.target)) setPanel(false);
-    const summary = event.target.closest('summary');
-    if (summary?.parentElement.matches('details:not([open])') && !control.contains(summary)) cue('expand');
-    if (event.target.closest('#go-comparison')) cue('expand');
+    // expand cues now come from sfx.js (on/off)
+    // const summary = event.target.closest('summary');
+    // if (summary?.parentElement.matches('details:not([open])') && !control.contains(summary)) cue('expand');
+    // if (event.target.closest('#go-comparison')) cue('expand');
   });
   document.addEventListener('keydown', event => {
     if (event.key !== 'Escape' || panel.hidden) return;
