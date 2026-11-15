@@ -35,3 +35,8 @@ python -m http.server 8000
 ```
 
 Then open http://127.0.0.1:8000/. Sound starts only after you turn it on from **SOUND** in the top bar.
+
+## Use of AI tools
+
+- Background score: AI-generated with Stable Audio 3 from the team's prompts, then looped, layered and compressed by the team. The audio files carry this note in their metadata.
+- Code and data processing: AI coding assistants Codex (OpenAI) and Claude Code (Anthropic) assisted with implementation, data processing and browser testing; the team reviewed the results.
